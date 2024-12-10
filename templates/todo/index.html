@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Todo App</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <!-- Custom CSS to enhance the look -->
+  <style>
+    /* Unique Background with gradient and pattern */
+    body {
+      background: linear-gradient(135deg, #f06, #ff9);
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+      background-attachment: fixed;
+      background-size: cover;
+    }
+
+    /* Container styles */
+    .container {
+      max-width: 960px;
+      margin-top: 50px;
+      background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      padding: 30px;
+      z-index: 1;
+    }
+
+    /* Form styles */
+    .form-group label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .btn-dark {
+      background-color: #4e4e4e;
+      border-color: #4e4e4e;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-dark:hover {
+      background-color: #333;
+      border-color: #333;
+    }
+
+    /* Table styling */
+    table {
+      margin-top: 30px;
+      background-color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      text-align: center;
+      padding: 12px 15px;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+    }
+
+    td {
+      border-top: 1px solid #ddd;
+    }
+
+    .btn-sm {
+      margin: 5px 0;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-sm:hover {
+      transform: scale(1.1);
+    }
+
+    .badge-success {
+      background-color: #28a745;
+    }
+
+    .badge-danger {
+      background-color: #dc3545;
+    }
+
+    /* Hover effects for table rows */
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    /* Add some spacing for form buttons */
+    .form-group input, .form-group textarea {
+      margin-bottom: 15px;
+    }
+
+    /* Tooltip styling for buttons */
+    .tooltip-inner {
+      background-color: #333;
+      color: #fff;
+    }
+
+  </style>
+  
+  <script>
+    // JavaScript function for confirmation before deletion
+    function confirmDelete() {
+      return confirm('Are you sure you want to delete this item?');
+    }
+  </script>
+
+</head>
+<body>
+
+<div class="container">
+    <h2 class="text-center" style="color: #007bff;">Create a Todo Item</h2>
+    <div class="row justify-content-center">
+        <div class="col-sm-7">
+            <form action="{% url 'create_todo' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="title">Title:</label>
+                  <input type="text" class="form-control" id="title" placeholder="Enter title" name="title" required>
+                </div>
+                <div class="form-group">
+                  <label for="description">Description:</label>
+                  <textarea class="form-control" name="description" placeholder="Enter description" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-dark btn-block">Submit</button>
+              </form>
+        </div>
+    </div>
+  
+    <h3 class="text-center" style="margin-top: 40px;">Your Todo List</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>SNo.</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for todo in todos %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ todo.title }}</td>
+                <td>{{ todo.description }}</td>
+                <td>
+                    {% if todo.completed %}
+                    <span class="badge badge-success">Completed</span>
+                    {% else %}
+                    <a class="btn btn-sm btn-dark" href="{% url 'complete_todo' todo.id %}" data-toggle="tooltip" title="Mark as Completed">Complete</a>
+                    {% endif %}
+                    <a class="btn btn-sm btn-danger" href="{% url 'delete_todo' todo.id %}" onclick="return confirmDelete();" data-toggle="tooltip" title="Delete Todo">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+  // Initialize tooltips for buttons
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+</script>
+
+</body>
+</html>
+
